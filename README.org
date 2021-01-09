@@ -1,0 +1,10 @@
+* Browser Automation (using Lisp)
+
+** Tech Used
+*** Nyxt
+ - A browser that's designed to be hacked: https://github.com/atlas-engineer/nyxt
+ - Only available for Linux
+ - Better experience if installed using guix package manager: https://guix.gnu.org/manual/en/html_node/Getting-Started.html
+
+*** Parenscript
+- A subset of Common Lisp that generates JavaScript (ES5): https://common-lisp.net/project/parenscript/reference.html
