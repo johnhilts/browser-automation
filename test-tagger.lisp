@@ -7,9 +7,16 @@
 
 (define-parenscript test-tagger-ps ()
   "register this parenscript with Nyxt"
+  (defmacro with-timeout-of (timeout-in-ms call-back &rest body)
+    (let ((function-name (gensym "call-back-wrapper")))
+      `(let ((,function-name #'(lambda ()
+				 (,call-back)
+				 ,@body)))
+	 (set-timeout ,function-name ,timeout-in-ms))))
+  
   (defun filter-by-tag ()
     "use filter field in the UI to filter by a tag"
-    (let ((first-tag (ps:@ (ps:chain document (query-selector-all \"a\")) 0)))
+    (let ((first-tag (ps:@ (ps:chain document (query-selector-all "#tag-list-body a")) 0)))
       (ps:chain first-tag (click))))
   
   (defun can-add-note-and-tag ()
@@ -24,7 +31,7 @@
 	   (tags-field (ps:chain document (get-element-by-id tags-field-id)))
 	   (add-button (ps:chain document (get-element-by-id add-button-id)))
 	   (note-value (concatenate 'string
-				    "The current time is: " 
+				    "The current time is: " #\Newline
 				    (ps:chain dt (get-full-year)) "/"
 				    (+ (ps:chain dt (get-month)) 1) "/"
 				    (ps:chain dt (get-day)) " "
@@ -36,8 +43,16 @@
       (setf (ps:@ note-field value) note-value)
       (setf (ps:@ tags-field value) tags-value)
       (ps:chain add-button (click))
-      (set-timeout filter-by-tag 1000)
-      t))
+      (with-timeout-of 1000 filter-by-tag
+	(with-timeout-of 1000 #'(lambda ()
+				  (let ((note (ps:@ (ps:chain document (query-selector "#note-list-body label")) inner-text)))
+				    (if (string= note note-value)
+					(ps:chain console (log "display value matches input"))
+					(ps:chain console (log "display value DOES NOT match input!!")))))
+	  t)
+	t)
+      t)
+    t)
   (can-add-note-and-tag))
 
 (define-command wrapper-for-test-tagger-ps ()
