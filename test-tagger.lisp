@@ -7,7 +7,7 @@
 
 (define-parenscript test-tagger-ps ()
   "register this parenscript with Nyxt"
-  (defmacro with-timeout-of (timeout-in-ms call-back &rest body)
+  (defmacro with-delay-of (timeout-in-ms call-back &rest body)
     (let ((function-name (gensym "call-back-wrapper")))
       `(let ((,function-name #'(lambda ()
 				 (,call-back)
@@ -43,8 +43,8 @@
       (setf (ps:@ note-field value) note-value)
       (setf (ps:@ tags-field value) tags-value)
       (ps:chain add-button (click))
-      (with-timeout-of 1000 filter-by-tag
-	(with-timeout-of 1000 #'(lambda ()
+      (with-delay-of 1000 filter-by-tag
+	(with-delay-of 1000 #'(lambda ()
 				  (let ((note (ps:@ (ps:chain document (query-selector "#note-list-body label")) inner-text)))
 				    (if (string= note note-value)
 					(ps:chain console (log "display value matches input"))
