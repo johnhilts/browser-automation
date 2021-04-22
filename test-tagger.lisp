@@ -3,10 +3,11 @@
   ;; For timing reasons, it works better to have a buffer already created when running the test.
   ;; Creating a buffer at the beginning of the test won't create it fast enough for the next commands.
   ;; I should probably try doing some kind of sleep.
-  (make-buffer-focus :url "http://192.168.1.18:5070/info"))
+  (make-buffer :url "http://192.168.1.18:5070/info"))
 
 (define-parenscript test-tagger-ps ()
   "register this parenscript with Nyxt"
+  
   (defmacro with-delay-of (timeout-in-ms call-back &rest body)
     (let ((function-name (gensym "call-back-wrapper")))
       `(let ((,function-name #'(lambda ()
@@ -45,10 +46,10 @@
       (ps:chain add-button (click))
       (with-delay-of 1000 filter-by-tag
 	(with-delay-of 1000 #'(lambda ()
-				  (let ((note (ps:@ (ps:chain document (query-selector "#note-list-body label")) inner-text)))
-				    (if (string= note note-value)
-					(ps:chain console (log "display value matches input"))
-					(ps:chain console (log "display value DOES NOT match input!!")))))
+				(let ((note (ps:@ (ps:chain document (query-selector "#note-list-body label")) inner-text)))
+				  (if (string= note note-value)
+				      (ps:chain console (log "display value matches input"))
+				      (ps:chain console (log "display value DOES NOT match input!!")))))
 	  t)
 	t)
       t)
@@ -63,6 +64,7 @@
   "test the tagger web app"
   (with-current-buffer *test-tagger-buffer*
     ;;    (reload-current-buffer) ; this won't work because of timing issues
+    (open-inspector)
     (wrapper-for-test-tagger-ps)
     *test-tagger-buffer*))
 
