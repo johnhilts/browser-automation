@@ -1,10 +1,3 @@
-(defparameter *test-tagger-buffer*
-  ;; Create a buffer and set focus on it
-  ;; For timing reasons, it works better to have a buffer already created when running the test.
-  ;; Creating a buffer at the beginning of the test won't create it fast enough for the next commands.
-  ;; I should probably try doing some kind of sleep.
-  (make-buffer :url "http://192.168.1.18:5070/info" :title "Info List"))
-
 (define-parenscript test-tagger-ps ()
   "register this parenscript with Nyxt"
   
@@ -63,9 +56,11 @@
 (defun test-tagger ()
   "test the tagger web app"
   ;;    (reload-current-buffer) ; this won't work because of timing issues
-  (set-current-buffer *test-tagger-buffer*)
-  (open-inspector)
-  (wrapper-for-test-tagger-ps)
-  *test-tagger-buffer*)
+  (let ((test-tagger-buffer (make-buffer :url "http://192.168.1.18:5070/info" :title "Info List")))
+    (sleep 0.3) ;; this might only work after having loaded the same URL at least once ...
+    (set-current-buffer test-tagger-buffer)
+    (open-inspector)
+    (wrapper-for-test-tagger-ps)
+    test-tagger-buffer))
 
 
