@@ -1,0 +1,6 @@
+(swank:set-default-directory "/home/john/code/lisp/browser-automation/")
+(push #p"/home/john/code/lisp/source/util-lib/testing/jfh-testing/" asdf:*central-registry*)
+(push #p"/home/john/code/lisp/browser-automation/" asdf:*central-registry*)
+(asdf:load-system "jfh-testing")
+(asdf:load-system "jfh-browser-automation")
+(in-package #:jfh-browser-automation)
