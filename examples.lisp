@@ -13,3 +13,8 @@
   (let ((search-textbox (ps:chain document (query-selector \"input\"))))
     (setf (ps:@ search-textbox value) \"nyxt browser examples\"))
 ")
+
+;;; set certificate exception
+(let* ((buffer (make-buffer :url (url "https://johnhilts.com:5090/todos") :title "Todo List"))
+		  (host (quri:uri-host (url "https://johnhilts.com"))))
+	     (pushnew host (certificate-exceptions buffer) :test #'string=))

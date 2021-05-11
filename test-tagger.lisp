@@ -1,6 +1,6 @@
 (in-package #:jfh-browser-automation)
 
-(nyxt:define-parenscript test-tagger-ps ()
+(define-parenscript test-tagger-ps ()
   "register this parenscript with Nyxt"
   
   (defmacro with-delay-of (timeout-in-ms call-back &rest body)
@@ -51,17 +51,17 @@
     t)
   (can-add-note-and-tag))
 
-(nyxt:define-command wrapper-for-test-tagger-ps ()
+(define-command wrapper-for-test-tagger-ps ()
   "wrapper command that can be invoked to run parenscript"
   (test-tagger-ps))
 
 (defun test-tagger ()
   "test the tagger web app"
   ;;    (reload-current-buffer) ; this won't work because of timing issues
-  (let ((test-tagger-buffer (nyxt:make-buffer :url "http://192.168.1.18:5070/info" :title "Info List")))
+  (let ((test-tagger-buffer (make-buffer :url (url "http://192.168.1.18:5070/info") :title "Info List")))
     (sleep 0.3) ;; this might only work after having loaded the same URL at least once ...
-    (nyxt:set-current-buffer test-tagger-buffer)
-    (nyxt:open-inspector)
+    (set-current-buffer test-tagger-buffer)
+    (open-inspector)
     (wrapper-for-test-tagger-ps)
     test-tagger-buffer))
 
@@ -70,9 +70,9 @@
   (test-spec :category "tagger"
     (test-spec :description "typical operations"
       (test-spec :it "should add note and tag it"
-	(let ((test-tagger-buffer (nyxt:make-buffer :url "http://192.168.1.18:5070/info" :title "Info List")))
+	(let ((test-tagger-buffer (make-buffer :url (url "http://192.168.1.18:5070/info") :title "Info List")))
 	  (sleep 0.7)
-	  (nyxt:set-current-buffer test-tagger-buffer)
-	  (nyxt:open-inspector)
+	  (set-current-buffer test-tagger-buffer)
+	  (open-inspector)
 	  (wrapper-for-test-tagger-ps)
 	  (not (null test-tagger-buffer)))))))
